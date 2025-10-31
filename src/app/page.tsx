@@ -1,65 +1,83 @@
-import Image from "next/image";
+'use client';
+import './page.css';
+import {useEffect} from 'react';
 
 export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    useEffect(() => {
+        // 星空背景粒子
+        const canvas = document.querySelector('.bg-canvas') as HTMLCanvasElement;
+        const ctx = canvas.getContext('2d');
+        let w: number, h: number;
+        let stars: { x: number; y: number; r: number; o: number; s: number }[] = [];
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+            stars = Array.from({length: 120}, () => ({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                r: Math.random() * 1.2,
+                o: Math.random() * 0.8 + 0.2,
+                s: Math.random() * 0.4 + 0.1,
+            }));
+        }
+
+        function draw() {
+            ctx!.clearRect(0, 0, w, h);
+            ctx!.fillStyle = 'rgba(255,255,255,0.9)';
+            for (const star of stars) {
+                ctx!.globalAlpha = star.o;
+                ctx!.beginPath();
+                ctx!.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+                ctx!.fill();
+                star.y -= star.s;
+                if (star.y < -10) star.y = h + 10;
+            }
+            requestAnimationFrame(draw);
+        }
+
+        resize();
+        draw();
+        window.addEventListener('resize', resize);
+        return () => window.removeEventListener('resize', resize);
+    }, []);
+
+    return (
+        <div className="profile-page">
+            <canvas className="bg-canvas"></canvas>
+
+            <div className="profile-card">
+                <h1 className="name">DIPENG XU</h1>
+                <p className="title">文艺青年 · 不知名的Android、Web开发工程师</p>
+
+                <p className="bio">
+                    喜欢清晨的光，咖啡的香气<br/>
+                    偶尔写写手账，记录日常的美好瞬间<br/>
+                    喜欢漫步街头，感受城市的秩序与节奏<br/>
+                </p>
+
+                <p className="bio">
+                    会读一下鲁迅、马尔克斯、奥威尔<br/>
+                    听摇滚，看电影<br/>
+                </p>
+
+                <p className="bio">
+                    我喜欢在冬天的时候<br/>
+                    穿着一件羽绒服<br/>
+                    配上一条牛仔裤或者工装服<br/>
+                    再加上一双简单的运动鞋<br/>
+                    戴着一块手表<br/>
+                    就这样出门去寻找我最喜欢吃的冰店<br/>
+                    我坐在冰店的窗口边上<br/>
+                    感受着凛冽的北风呼啸声在我耳边划过<br/>
+                    然后惬意地吃着冰沙<br/>
+                    我想，这就是我最快乐的时候<br/>
+                </p>
+
+                <p className="epigraph">
+                    「生活的艺术，不在于追求完美，而在于感受每一刻的温度。」
+                </p>
+            </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+    );
 }
